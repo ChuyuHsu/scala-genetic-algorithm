@@ -2,33 +2,33 @@ package hsu.algorithm.evolutionary
 
 import scala.util.Random
 
+
+
 class GeneticAlgorithm(param: EAParam,
                        problemFunc: Function1[List[Boolean], Double])
   extends EvolutionaryAlgorithm[Boolean](param, problemFunc)
 {
-  override def initialize(num: Int): Population = {
+  override protected def initialize(num: Int): Population = {
     return new Population(param.numOfIndividuals)
   }
 
-  def getRandomListOfT2(length: Int): List[Boolean] = List.fill(3)(Random.nextBoolean())
+  override protected def getRandomListOfT(length: Int) = List.fill(length)(Random.nextBoolean())
 
-  override def getRandomListOfT(length: Int): List[Boolean] = {
-    List.fill(3)(Random.nextBoolean()).toList
-  }
-
-  override def crossover(population: Population): Population = {
+  override protected def crossover(population: Population) = {
     population
   }
 
-  override def replace(population: Population): Population = {
+  override protected def replace(population: Population) = {
     population
   }
 
-  override def select(population: Population): Population = {
+  override protected def select(population: Population) = {
     population
   }
 
-  override def mutate(population: Population): Population = {
+  override protected def mutate(population: Population) = {
     population
   }
 }
+
+
