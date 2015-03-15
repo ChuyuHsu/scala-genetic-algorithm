@@ -1,8 +1,13 @@
 package hsu.algorithm.evolutionary
 
+import org.apache.log4j.Logger
+
+
 
 abstract class EvolutionaryAlgorithm[T](param: EAParam,
                                    problemFunc: Function1[List[T], Double]){
+  private[this] val logger = Logger.getLogger(this.getClass.getName)
+
   class Chromosome(val genotype: List[T])
     extends Ordered[Chromosome]
   {
@@ -45,14 +50,14 @@ abstract class EvolutionaryAlgorithm[T](param: EAParam,
     var population = this.initialize(param.numOfIndividuals)
 
     (0 to param.numOfIterations).foreach { i =>
-      println(s"Iteration $i")
+      logger.info(s"Iteration $i, population size: ${population.size}")
       population = this.select(param.selectionPressure, population)
       population = this.crossover(population)
       population = this.mutate(population)
       population = this.replace(population)
 
-      println("  Best fitness: " + population.getBestIndividual().value)
-      println("       individual: " + population.getBestIndividual().genotype)
+      logger.info("  Best fitness: " + population.getBestIndividual().value)
+      logger.info("       individual: " + population.getBestIndividual().genotype)
     }
     val best = population.getBestIndividual()
 
