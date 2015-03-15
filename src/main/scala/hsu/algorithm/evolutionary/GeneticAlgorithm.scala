@@ -15,22 +15,23 @@ class GeneticAlgorithm(param: EAParam,
     //tournamentSelection
     val nextGen = population.size
 
-    val randomIndices = (for(i <- 0 until selectionPressure) yield Random.shuffle( (0 until nextGen).toList )).flatten.toList
+        val randomIndices = (for(i <- 0 until selectionPressure) yield Random.shuffle( (0 until nextGen).toList )).flatten.toList
 
-    new Population((0 until nextGen).map{ i =>
-      logger.trace("selection candidates:")
-      (0 until selectionPressure).map { j =>
-        logger.trace(s"    index: ${selectionPressure * i + j}, randomIndex: ${randomIndices(selectionPressure * i + j)}")
-        logger.trace(s"    value: ${population.get(randomIndices(selectionPressure * i + j)).genotype}")
-        population.get(randomIndices(selectionPressure * i + j))}.max
-    }.toList)
+        new Population((0 until nextGen).map{ i =>
+          logger.trace("selection candidates:")
+          (0 until selectionPressure).map { j =>
+            logger.trace(s"    index: ${selectionPressure * i + j}, randomIndex: ${randomIndices(selectionPressure * i + j)}")
+            logger.trace(s"    value: ${population.get(randomIndices(selectionPressure * i + j)).genotype}")
+            population.get(randomIndices(selectionPressure * i + j))}.max
+        }.toList)
+    population
   }
 
   override protected def crossover(population: Population) = {
     val nextGen = population.size
-    val randomIndices = (for(i <- 0 until 2) yield Random.shuffle( (0 until nextGen).toList )).flatten.toList
+    val randomIndices = Random.shuffle( (0 until nextGen).toList )
 
-    val parentList = (0 until nextGen).map{ i =>
+    val parentList = (0 until nextGen/2).map{ i =>
       (0 until 2).map { case j =>
         population.get(randomIndices(2 * i + j)).genotype}
     }
