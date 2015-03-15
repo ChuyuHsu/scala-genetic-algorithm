@@ -1,6 +1,5 @@
 package hsu.algorithm.evolutionary
 
-import scala.collection.mutable.ListBuffer
 
 abstract class EvolutionaryAlgorithm[T](param: EAParam,
                                    problemFunc: Function1[List[T], Double]){
@@ -12,20 +11,24 @@ abstract class EvolutionaryAlgorithm[T](param: EAParam,
     override def compare(that: Chromosome): Int = this.value compare that.value
   }
 
-  class Population(val size: Int){
-    val population_list = this.generate()
+  class Population(s: Int, c: List[Chromosome]){
+    def this(s: Int) = this(s, Population.generate(s))
+    def this(c: List[Chromosome]) = this(c.size, c)
 
-    def generate(): List[Chromosome] = {
-      val buffer = new ListBuffer[Chromosome]()
+    val list = c
+    val size = s
 
-      (0 to size).foreach{ i =>
-        buffer += new Chromosome(getRandomListOfT())
-      }
-      buffer.toList
+    var best: Int = list.indexOf(list.max)
+    def getBestIndividual() = list(best)
+    def get(i: Int) = list(i)
+  }
+
+  object Population{
+    def generate(size: Int): List[Chromosome] = {
+      (0 to size).map{ i =>
+        new Chromosome(getRandomListOfT())
+      }.toList
     }
-
-    var best: Int = population_list.indexOf(population_list.max)
-    def getBestIndividual() = population_list(best)
   }
 
   protected def initialize(num: Int) ={
@@ -33,7 +36,7 @@ abstract class EvolutionaryAlgorithm[T](param: EAParam,
   }
 
   protected def getRandomListOfT(length: Int = param.numOfProblemLength): List[T];
-  protected def select(population: Population): Population;
+  protected def select(selectionPressure: Int, population: Population): Population;
   protected def crossover(population: Population): Population;
   protected def mutate(population: Population): Population;
   protected def replace(population: Population): Population;
@@ -43,12 +46,13 @@ abstract class EvolutionaryAlgorithm[T](param: EAParam,
 
     (0 to param.numOfIterations).foreach { i =>
       println(s"Iteration $i")
-      population = this.select(population)
+      population = this.select(param.selectionPressure, population)
       population = this.crossover(population)
       population = this.mutate(population)
       population = this.replace(population)
 
-      println("  Best individual: " + population.getBestIndividual().genotype)
+      println("  Best fitness: " + population.getBestIndividual().value)
+      println("       individual: " + population.getBestIndividual().genotype)
     }
     val best = population.getBestIndividual()
 
