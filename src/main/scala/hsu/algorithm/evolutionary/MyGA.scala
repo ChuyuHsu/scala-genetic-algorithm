@@ -7,7 +7,7 @@ object MyGA {
 
   def main(args: Array[String]) {
     logger.info("Start MyGA...")
-    val param = EAParam(100, 1000, 1000, 3, 0.5, 0.5)
+    val param = EAParam(4000, 40, 100, 3, 0.5, 0.5)
     val problem = BinaryProblem.oneMax(param.numOfProblemLength, _:List[Boolean])
 
     val ga = new GeneticAlgorithm(param, problem)

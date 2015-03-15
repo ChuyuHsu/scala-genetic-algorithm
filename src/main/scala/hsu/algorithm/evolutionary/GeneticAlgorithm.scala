@@ -9,10 +9,6 @@ class GeneticAlgorithm(param: EAParam,
 {
   private[this] val logger = Logger.getLogger(this.getClass.getName)
 
-  override protected def initialize(num: Int): Population = {
-    return new Population(param.numOfIndividuals)
-  }
-
   override protected def getRandomListOfT(length: Int) = List.fill(length)(Random.nextBoolean())
 
   override protected def select(selectionPressure: Int, population: Population) = {
@@ -22,7 +18,10 @@ class GeneticAlgorithm(param: EAParam,
     val randomIndices = (for(i <- 0 until selectionPressure) yield Random.shuffle( (0 until nextGen).toList )).flatten.toList
 
     new Population((0 until nextGen).map{ i =>
-      (0 until selectionPressure).map { case j =>
+      logger.trace("selection candidates:")
+      (0 until selectionPressure).map { j =>
+        logger.trace(s"    index: ${selectionPressure * i + j}, randomIndex: ${randomIndices(selectionPressure * i + j)}")
+        logger.trace(s"    value: ${population.get(randomIndices(selectionPressure * i + j)).genotype}")
         population.get(randomIndices(selectionPressure * i + j))}.max
     }.toList)
   }
@@ -45,8 +44,8 @@ class GeneticAlgorithm(param: EAParam,
 
         logger.trace("    parent0: " + parents(0).toString())
         logger.trace("    parent1: " + parents(1).toString())
-        logger.trace("    child1: " + child1.toString())
-        logger.trace("    child2: " + child2.toString())
+//        logger.trace("    child1: " + child1.toString())
+//        logger.trace("    child2: " + child2.toString())
 
         List(child1, child2)
       }else
@@ -61,13 +60,8 @@ class GeneticAlgorithm(param: EAParam,
   }
 
   override protected def mutate(population: Population) = {
-    new Population(population.list.map{ chromosome =>
-      if(param.mutationRate >= Random.nextDouble()){
-        val i = Random.nextInt(chromosome.genotype.size)
-        logger.trace(s"  Mutated at $i")
-        new Chromosome(chromosome.genotype.updated(i, !chromosome.genotype(i)))
-      }else
-        chromosome
+    new Population(population.list.map { chromosome =>
+      new Chromosome(chromosome.genotype.map(b => if (param.mutationRate >= Random.nextDouble()) !b else b))
     })
   }
 }
