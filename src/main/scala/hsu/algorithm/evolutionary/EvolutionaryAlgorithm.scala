@@ -51,6 +51,7 @@ abstract class EvolutionaryAlgorithm[T](param: EAParam,
 
     (0 to param.numOfIterations).foreach { i =>
       logger.info(s"Iteration $i, population size: ${population.size}")
+
       population = this.select(param.selectionPressure, population)
       population = this.crossover(population)
       population = this.mutate(population)
