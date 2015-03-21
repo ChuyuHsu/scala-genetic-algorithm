@@ -7,8 +7,8 @@ object MyGA {
 
   def main(args: Array[String]) {
     logger.info("Start MyGA...")
-    val param = EAParam(4000, 40, 100, 3, 0.5, 0.5)
-    val problem = BinaryProblem.oneMax(param.numOfProblemLength, _:List[Boolean])
+    val param = EAParam(4000, 40, 100, 3, 0.5, 0.0)
+    val problem = new OneMax();
 
     val ga = new GeneticAlgorithm(param, problem)
     val (solution, fitness) = ga.run()

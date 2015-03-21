@@ -1,37 +1,44 @@
 package hsu.algorithm.evolutionary
 
 import org.apache.log4j.Logger
-
+import util.control.Breaks._
 
 
 abstract class EvolutionaryAlgorithm[T](param: EAParam,
-                                   problemFunc: Function1[List[T], Double]){
+                                        problem: Problem[T]) {
   private[this] val logger = Logger.getLogger(this.getClass.getName)
 
-
-  protected def initialize(num: Int) ={
-    new Population(num)
-  }
+  protected def initialize(num: Int): Population[T];
 
   protected def getRandomListOfT(length: Int = param.numOfProblemLength): List[T];
-  protected def select(selectionPressure: Int, population: Population): Population;
-  protected def crossover(population: Population): Population;
-  protected def mutate(population: Population): Population;
-  protected def replace(population: Population): Population;
 
-  def run(): (List[T], Double) ={
+  protected def select(selectionPressure: Int, population: Population[T]): Population[T];
+
+  protected def crossover(population: Population[T]): Population[T];
+
+  protected def mutate(population: Population[T]): Population[T];
+
+  protected def replace(population: Population[T]): Population[T];
+
+  def run() = {
     var population = this.initialize(param.numOfIndividuals)
+    breakable {
+      for (i <- 0 until param.numOfIterations) {
 
-    (0 to param.numOfIterations).foreach { i =>
-      logger.info(s"Iteration $i, population size: ${population.size}")
+        logger.info(s"Iteration $i, population size: ${population.size}")
 
-      population = this.select(param.selectionPressure, population)
-      population = this.crossover(population)
-      population = this.mutate(population)
-      population = this.replace(population)
+        population = this.select(param.selectionPressure, population)
+        population = this.crossover(population)
+        population = this.mutate(population)
+        population = this.replace(population)
 
-      logger.info("  Best fitness: " + population.getBestIndividual().value)
-      logger.info("       individual: " + population.getBestIndividual().genotype)
+        logger.info("  Best fitness: " + population.getBestIndividual().value)
+        logger.info("  pop variance: " + population.statistics.getVariance())
+        logger.info("  pop mean: " + population.statistics.getMean())
+        logger.info("       individual: " + population.getBestIndividual().genotype)
+        if (population.statistics.getVariance() <= 0.25)
+          break
+      }
     }
     val best = population.getBestIndividual()
 

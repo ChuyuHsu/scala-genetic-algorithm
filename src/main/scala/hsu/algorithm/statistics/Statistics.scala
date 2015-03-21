@@ -1,6 +1,6 @@
 package hsu.algorithm.statistics
 
-class Statistics {
+class Statistics (records: List[Double]){
   private val precision: Double = 1e-6
   private var min: Double = Double.MaxValue
   private var max: Double = Double.MinValue
@@ -9,6 +9,8 @@ class Statistics {
   private var sum: Double = 0.0
   private var variance: Double = 0.0
   private var number: Long = 0
+
+  records.foreach(record(_))
 
   def record(value: Double): Boolean = {
     number += 1

@@ -5,9 +5,9 @@ class OneMax extends BinaryProblem{
 }
 
 abstract class BinaryProblem extends Problem[Boolean]{
-  abstract def evaluate(list: List[Boolean]): Double
+  def evaluate(list: List[Boolean]): Double
 }
 
 abstract class Problem[T]{
-  abstract def evaluate(list: List[T]):Double
+  def evaluate(list: List[T]):Double
 }
